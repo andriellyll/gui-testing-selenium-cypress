@@ -3,3 +3,6 @@ cypress/downloads
 cypress/screenshots
 cypress/videos
 cypress/logs
+
+/media
+.docker
