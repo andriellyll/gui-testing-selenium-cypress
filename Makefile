@@ -8,19 +8,22 @@ create-cont-podman:
 	podman run -v $(pwd)/media:/app/public/media -d --restart=always -p 8080:80 --name 'sylius' sylius-showcase
 	podman exec -it sylius bin/console sylius:fixtures:load -n && sudo chown -R 33:33 media
 
-set-enviroment:
+install-yarn:
+	npm install -g yarn
+
+use-cypress:
 	yarn install
 	yarn cypress
 
-run-cypress-all:
+test-cypress-all:
 	yarn cypress:test-suite
 
-run-cypress-options:
+test-cypress-options:
 	yarn cypress:test-file cypress/e2e/options.cy.js
 
-run-selenium-all:
+test-selenium-all:
 	yarn selenium:test-suite
 
-run-selenium-options:
+test-selenium-options:
 	yarn selenium:test-file selenium/e2e/options.cy.js
 
