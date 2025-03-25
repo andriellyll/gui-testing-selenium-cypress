@@ -25,5 +25,5 @@ test-selenium-all:
 	yarn selenium:test-suite
 
 test-selenium-options:
-	yarn selenium:test-file selenium/e2e/options.cy.js
+	yarn selenium:test-file selenium/e2e/options.js
 

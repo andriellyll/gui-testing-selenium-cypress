@@ -1,5 +1,5 @@
-const { Builder, By, until } = require('selenium-webdriver');
-const assert = require('assert');
+import { Builder, By } from 'selenium-webdriver';
+import assert from 'assert';
 
 describe('options', () => {
   let driver;
@@ -19,13 +19,14 @@ describe('options', () => {
     await driver.findElement(By.id('_username')).sendKeys('sylius');
     await driver.findElement(By.id('_password')).sendKeys('sylius');
     await driver.findElement(By.css('.primary')).click();
+    await driver.findElement(By.className('icon options')).click()
     // await driver.sleep(1000);
   });
 
   // Remove .only and implement others test cases!
   it.only('edit size XL to GG in Portuguese (Portugal)', async () => {
     // Click in options in side menu
-    await driver.findElement(By.linkText('Options')).click();
+    // await driver.findElement(By.linkText('Options')).click();
 
     // Type in value input to search for specify option
     await driver.findElement(By.id('criteria_search_value')).sendKeys('jeans_size');
@@ -51,12 +52,11 @@ describe('options', () => {
     assert(bodyText.includes('Product option has been successfully updated.'));
   });
 
-  it('test case 2', async () => {
+  it('create a new product, forgetting to add a product name in English', async () => {
     // Implement your test case 2 code here
   });
 
-  it('test case 3', async () => {
-    // Implement your test case 3 code here
+  it('delete a product', async () => {
   });
 
   // Implement the remaining test cases in a similar manner
