@@ -8,6 +8,16 @@ create-cont-podman:
 	podman run -v $(pwd)/media:/app/public/media -d --restart=always -p 8080:80 --name 'sylius' sylius-showcase
 	podman exec -it sylius bin/console sylius:fixtures:load -n && sudo chown -R 33:33 media
 
+reset-database-docker:
+	docker stop sylius
+	docker rm sylius
+	@$(MAKE) create-cont-docker
+
+reset-database-podman:
+	podman stop sylius
+	podman rm sylius
+	@$(MAKE) create-cont-podman
+
 install-yarn:
 	npm install -g yarn
 

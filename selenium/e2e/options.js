@@ -1,4 +1,4 @@
-import { Builder, By } from 'selenium-webdriver';
+import { Builder, By, until, withTagName } from 'selenium-webdriver';
 import assert from 'assert';
 
 describe('options', () => {
@@ -15,16 +15,13 @@ describe('options', () => {
   beforeEach(async () => {
     driver.manage().deleteAllCookies();
     await driver.get('http://localhost:8080/admin');
-    // await driver.get('http://150.165.75.99:8080/admin');
     await driver.findElement(By.id('_username')).sendKeys('sylius');
     await driver.findElement(By.id('_password')).sendKeys('sylius');
     await driver.findElement(By.css('.primary')).click();
-    await driver.findElement(By.className('icon options')).click()
-    // await driver.sleep(1000);
+    await driver.findElement(By.linkText('Options')).click();
   });
 
-  // Remove .only and implement others test cases!
-  it.only('edit size XL to GG in Portuguese (Portugal)', async () => {
+  it('edit size XL to GG in Portuguese (Portugal)', async () => {
     // Click in options in side menu
     // await driver.findElement(By.linkText('Options')).click();
 
@@ -57,7 +54,18 @@ describe('options', () => {
   });
 
   it('delete a product', async () => {
+      const buttons = await driver.findElements({ css: '.ui.red.labeled.icon.button' });
+      if (buttons.length > 0) {
+        await buttons[1].click();
+  
+        const modal = await driver.wait(until.elementLocated({css: '#confirmation-modal'}), 10000);
+        await driver.wait(until.elementIsVisible(modal), 10000);
+  
+        const button = await driver.findElement({css: '#confirmation-button'});
+        await driver.wait(until.elementIsEnabled(button), 10000);
+        await button.click();
+        const bodyText = await driver.findElement({tagName: 'body'}).getText();
+        assert(bodyText.includes('Product option has been successfully deleted.'));
+      }
   });
-
-  // Implement the remaining test cases in a similar manner
 });
