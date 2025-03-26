@@ -49,9 +49,7 @@ describe('options', () => {
     assert(bodyText.includes('Product option has been successfully updated.'));
   });
 
-  it('create a new product, forgetting to add a product name in English', async () => {
-    // Implement your test case 2 code here
-  });
+  it('create a new product, forgetting to add a product name in English', async () => {});
 
   it('delete a product', async () => {
       const buttons = await driver.findElements({ css: '.ui.red.labeled.icon.button' });
@@ -68,4 +66,24 @@ describe('options', () => {
         assert(bodyText.includes('Product option has been successfully deleted.'));
       }
   });
+
+  it('filter by product option name', async () => {});
+
+  it('delete some product options', async () => {
+    const checkboxes = await driver.findElements({ css: '.bulk-select-checkbox' });
+    if (checkboxes.length > 0) {
+      await checkboxes[1].click();
+      await checkboxes[2].click();
+      const buttons = await driver.findElements({ css: '.ui.red.labeled.icon.button' });
+      buttons[0].click();
+      const modal = await driver.wait(until.elementLocated({css: '#confirmation-modal'}), 10000);
+      await driver.wait(until.elementIsVisible(modal), 10000);
+      const button = await driver.findElement({css: '#confirmation-button'});
+      await driver.wait(until.elementIsEnabled(button), 10000);
+      await button.click();
+      const bodyText = await driver.findElement({tagName: 'body'}).getText();
+      assert(bodyText.includes('Product_options have been successfully deleted.'));
+    }
+  });
+
 });
