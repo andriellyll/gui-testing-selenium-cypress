@@ -49,8 +49,6 @@ describe('options', () => {
     assert(bodyText.includes('Product option has been successfully updated.'));
   });
 
-  it('create a new product, forgetting to add a product name in English', async () => {});
-
   it('delete a product', async () => {
       const buttons = await driver.findElements({ css: '.ui.red.labeled.icon.button' });
       if (buttons.length > 0) {
@@ -66,8 +64,6 @@ describe('options', () => {
         assert(bodyText.includes('Product option has been successfully deleted.'));
       }
   });
-
-  it('filter by product option name', async () => {});
 
   it('delete some product options', async () => {
     const checkboxes = await driver.findElements({ css: '.bulk-select-checkbox' });
@@ -85,5 +81,23 @@ describe('options', () => {
       assert(bodyText.includes('Product_options have been successfully deleted.'));
     }
   });
+
+  it('filter by product name, with equals', async () => {});
+
+  it('edit a product size `S` to `P` in Spanish (Spain)', async () => {});
+
+  it('', async () => {});
+
+  // Lucas - selenium
+
+  it('create a new product, forgetting to add a product name in English', async () => {});
+
+  it('filter by product name, with contains', async () => {});
+  
+  it('try to delete a product, but givin up', async () => {});
+  
+  it('edit a product name `t_shirt_size` to `blusengröße` in German (Germany)', async () => {});
+  
+  it('', async () => {});
 
 });
