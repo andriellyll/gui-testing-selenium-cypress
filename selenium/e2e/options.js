@@ -21,7 +21,6 @@ describe('options', () => {
     await driver.findElement(By.linkText('Options')).click();
   });
   
-  
   it('edit size XL to GG in Portuguese (Portugal)', async () => {
     await driver.findElement(By.id('criteria_search_value')).sendKeys('jeans_size');
 
@@ -48,7 +47,7 @@ describe('options', () => {
 
   it('create a new product and cancel the creation', async () => {
     // Navega até a página de opções de produto
-    await driver.findElement(By.linkText('Options')).click();
+    // await driver.findElement(By.linkText('Options')).click();
   
     const createButton = await driver.wait(
       until.elementLocated(By.css('.ui.labeled.icon.button.primary')),
@@ -136,7 +135,6 @@ describe('options', () => {
     assert(bodyText.includes('T-shirt size'));
   });
   
-  
   it('try to delete a product, but giving up', async () => {
     const deleteButtons = await driver.findElements(By.css('.ui.red.labeled.icon.button'));
     const buttonsLength = deleteButtons.length;
@@ -164,6 +162,25 @@ describe('options', () => {
       assert(bodyText.includes('T-shirt size'));
     }
   });
+
+  it('create a new product successfully', async() => {
+    await driver.findElement({className : 'ui labeled icon button  primary'}).click();
+    const url = await driver.getCurrentUrl();
+
+    // Verifica se a URL é uma nova página para criar um produto
+    assert(url.includes('new'));
+
+    await driver.findElement({id: 'sylius_product_option_code'}, {timeout: 1000}).sendKeys('mini_falda');
+    await driver.findElement({id: 'sylius_product_option_position'}).sendKeys(5);
+    const countries = await driver.findElements({className: 'ui styled fluid accordion'});
+    await countries[0].click();
+    await driver.findElement({id: 'sylius_product_option_translations_en_US_name'}).sendKeys('short_skirt');
+    await driver.findElement({className: 'ui labeled icon primary button'}).click();
+    const body = await driver.findElement({tagName: 'body'}).getText();
+
+    // Verifica se o produto foi criado com sucesso
+    assert(body.includes('Product option has been successfully created.'));
+});
   
   it('edit a product name `t_shirt_size` to `blusengröße` in German (Germany)', async () => {
     const editButtons = await driver.findElements(By.css('*[class^="ui labeled icon button"]'));
@@ -190,23 +207,6 @@ describe('options', () => {
     assert(bodyText.includes('Product option has been successfully updated.'));
   });
 
-  // MARIA VITÓRIA
-  it('delete a product', async () => {
-      const buttons = await driver.findElements({ css: '.ui.red.labeled.icon.button' });
-      if (buttons.length > 0) {
-        await buttons[1].click();
-  
-        const modal = await driver.wait(until.elementLocated({css: '#confirmation-modal'}), 10000);
-        await driver.wait(until.elementIsVisible(modal), 10000);
-  
-        const button = await driver.findElement({css: '#confirmation-button'});
-        await driver.wait(until.elementIsEnabled(button), 10000);
-        await button.click();
-        const bodyText = await driver.findElement({tagName: 'body'}).getText();
-        assert(bodyText.includes('Product option has been successfully deleted.'));
-      }
-  });
-
   it('delete some product options', async () => {
     const checkboxes = await driver.findElements({ css: '.bulk-select-checkbox' });
     if (checkboxes.length > 0) {
@@ -224,10 +224,24 @@ describe('options', () => {
     }
   });
 
-  //it('filter by product name, with equals', async () => {});
+  it('delete a product', async () => {
+    const buttons = await driver.findElements({ css: '.ui.red.labeled.icon.button' });
+    if (buttons.length > 0) {
+      await buttons[1].click();
 
-  //it('edit a product size `S` to `P` in Spanish (Spain)', async () => {});
+      const modal = await driver.wait(until.elementLocated({css: '#confirmation-modal'}), 10000);
+      await driver.wait(until.elementIsVisible(modal), 10000);
 
-  //it('create a new product successfully', async () => {});
+      const button = await driver.findElement({css: '#confirmation-button'});
+      await driver.wait(until.elementIsEnabled(button), 10000);
+      await button.click();
+      const bodyText = await driver.findElement({tagName: 'body'}).getText();
+      assert(bodyText.includes('Product option has been successfully deleted.'));
+    }
+  });
+
+  it('edit a product size `S` to `P` in Spanish (Spain)', async () => {});
+
+  it('filter by product name, with equals', async () => {});
 
 });
