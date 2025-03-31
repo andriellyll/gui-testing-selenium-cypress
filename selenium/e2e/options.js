@@ -1,4 +1,4 @@
-import { Builder, By, until, withTagName } from 'selenium-webdriver';
+import { Builder, By, until } from 'selenium-webdriver';
 import assert from 'assert';
 
 describe('options', () => {
@@ -226,6 +226,7 @@ describe('options', () => {
 
   it('delete a product', async () => {
     const buttons = await driver.findElements({ css: '.ui.red.labeled.icon.button' });
+    let bodyText;
     if (buttons.length > 0) {
       await buttons[1].click();
 
@@ -237,10 +238,33 @@ describe('options', () => {
       await button.click();
       const bodyText = await driver.findElement({tagName: 'body'}).getText();
       assert(bodyText.includes('Product option has been successfully deleted.'));
+    } else {
+      bodyText = await driver.findElement({tagName: 'body'}).getText();
+      assert(bodyText.includes('There are no results to display'));
     }
+
   });
 
-  it('edit a product size `S` to `P` in Spanish (Spain)', async () => {});
+  it('edit a product size `S` to `P` in Spanish (Spain)', async () => {
+    const buttons = await driver.findElements({css: '*[class^="ui labeled icon button"]'});
+    let body;
+    if (buttons.length > 0) {
+
+      await buttons[2].click();
+      const currentUrl = await driver.getCurrentUrl();
+      assert(currentUrl.includes('edit'));
+      
+      const inputSize = await driver.findElement({id: 'sylius_product_option_values_0_translations_es_MX_value'});
+      await inputSize.clear(); await inputSize.sendKeys('P');
+      await driver.findElement({id: 'sylius_save_changes_button'}).click();
+      body = await driver.findElement({tagName: 'body'}).getText();
+      assert(body.includes('Product option has been successfully updated.'));
+
+    } else {
+      body = await driver.findElement({tagName: 'body'}).getText();
+      assert(body.includes('There are no results to display'));
+    }
+  });
 
   it('filter by product name, with equals', async () => {});
 
