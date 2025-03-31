@@ -45,10 +45,8 @@ describe('options', () => {
     assert(bodyText.includes('Product option has been successfully updated.'));
   });
 
-  it('create a new product and cancel the creation', async () => {
-    // Navega até a página de opções de produto
-    // await driver.findElement(By.linkText('Options')).click();
-  
+  it('trying to create a product, but canceling the creation', async () => {
+
     const createButton = await driver.wait(
       until.elementLocated(By.css('.ui.labeled.icon.button.primary')),
       10000
@@ -75,7 +73,7 @@ describe('options', () => {
     assert(bodyText.includes('Options'), 'Expected to find "Options" on the page, but it was not found.');
   });  
 
-  it('create a new product, forgetting to add a product name in English', async () => {
+  it('trying to create a new product, forgetting to add a product name in English', async () => {
     // Navega até a página de opções de produto
     await driver.findElement(By.linkText('Options')).click();
   
@@ -135,7 +133,7 @@ describe('options', () => {
     assert(bodyText.includes('T-shirt size'));
   });
   
-  it('try to delete a product, but giving up', async () => {
+  it('trying to delete a product, but canceling the deletion ', async () => {
     const deleteButtons = await driver.findElements(By.css('.ui.red.labeled.icon.button'));
     const buttonsLength = deleteButtons.length;
   
@@ -209,7 +207,12 @@ describe('options', () => {
 
   it('delete some product options', async () => {
     const checkboxes = await driver.findElements({ css: '.bulk-select-checkbox' });
-    if (checkboxes.length > 0) {
+    let bodyText;
+    if (checkboxes.length === 0){
+      bodyText = await driver.findElement({tagName: 'body'}).getText();
+      assert(bodyText.includes('There are no results to display'));
+      
+    } else if (checkboxes.length > 1) {
       await checkboxes[0].click();
       await checkboxes[1].click();
       const buttons = await driver.findElements({ css: '.ui.red.labeled.icon.button' });
@@ -219,7 +222,7 @@ describe('options', () => {
       const button = await driver.findElement({css: '#confirmation-button'});
       await driver.wait(until.elementIsEnabled(button), 10000);
       await button.click();
-      const bodyText = await driver.findElement({tagName: 'body'}).getText();
+      bodyText = await driver.findElement({tagName: 'body'}).getText();
       assert(bodyText.includes('Product_options have been successfully deleted.'));
     }
   });
@@ -242,13 +245,12 @@ describe('options', () => {
       bodyText = await driver.findElement({tagName: 'body'}).getText();
       assert(bodyText.includes('There are no results to display'));
     }
-
   });
 
   it('edit a product size `S` to `P` in Spanish (Spain)', async () => {
     const buttons = await driver.findElements({css: '*[class^="ui labeled icon button"]'});
     let body;
-    if (buttons.length > 0) {
+    if (buttons.length > 2) {
 
       await buttons[2].click();
       const currentUrl = await driver.getCurrentUrl();
@@ -266,6 +268,27 @@ describe('options', () => {
     }
   });
 
-  it('filter by product name, with equals', async () => {});
+  it('filter by product name, with equals', async () => {
+    await driver.findElement({id: 'criteria_search_type'}).sendKeys('Equal');
+    await driver.findElement({id: 'criteria_search_value'}).sendKeys('Jeans size');
+    await driver.findElement({className: 'ui blue labeled icon button'}).click();
+    
+    const elements = await driver.findElements({css: '*[class^="ui red labeled icon button"]'});
+    const body = await driver.findElement({tagName: 'body'}).getText();
 
+    if (elements.length >= 2) { 
+      const nameColumn = await driver.wait(
+        until.elementLocated({css: '*[class^="sortable sylius-table-column-name"]'}),
+        10000
+      );
+      await driver.wait(until.elementIsVisible(nameColumn), 10000);
+      await nameColumn.click();
+    
+      // Verifica se a URL contém 'asc'
+      const currentUrl = await driver.getCurrentUrl();
+      assert(currentUrl.includes('asc'));
+      assert(body.includes('Jeans size')); 
+
+    } else { assert(body.includes('There are no results to display')); }
+  });
 });
