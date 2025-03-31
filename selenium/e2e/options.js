@@ -102,13 +102,23 @@ describe('options', () => {
   });
   
   it('filter by product name, with contains', async () => {
-    const searchType = await driver.findElement(By.id('criteria_search_type'));
+    const optionsLink = await driver.wait(
+      until.elementLocated(By.linkText('Options')),
+      10000
+    );
+    await driver.wait(until.elementIsVisible(optionsLink), 10000);
+    await optionsLink.click();
+  
+    const searchType = await driver.wait(
+      until.elementLocated(By.id('criteria_search_type')),
+      10000
+    );
     await searchType.sendKeys('Contains');
   
     const searchValue = await driver.findElement(By.id('criteria_search_value'));
     await searchValue.click();
     await searchValue.sendKeys('size');
-
+  
     const filterButton = await driver.wait(
       until.elementLocated(By.css('*[class^="ui blue labeled icon button"]')),
       10000
@@ -116,7 +126,6 @@ describe('options', () => {
     await driver.wait(until.elementIsVisible(filterButton), 10000);
     await filterButton.click();
   
-    // Clica na coluna "Name" para ordenar
     const nameColumn = await driver.wait(
       until.elementLocated(By.css('*[class^="sortable sylius-table-column-name"]')),
       10000
@@ -132,6 +141,7 @@ describe('options', () => {
     const bodyText = await driver.findElement(By.tagName('body')).getText();
     assert(bodyText.includes('T-shirt size'));
   });
+  
   
   it('trying to delete a product, but canceling the deletion ', async () => {
     const deleteButtons = await driver.findElements(By.css('.ui.red.labeled.icon.button'));

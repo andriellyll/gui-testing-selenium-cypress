@@ -2,6 +2,7 @@
   "name": "gui-testing-cypress-selenium",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "scripts": {
     "cypress": "./node_modules/.bin/cypress open",
     "cypress:test-file": "./node_modules/.bin/cypress run -s",
